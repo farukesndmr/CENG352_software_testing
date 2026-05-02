@@ -76,5 +76,46 @@ public class UserRegistrationTest {
         String result = form.register("Ali", "Yılmaz", "ali@test.com", "01/01/1990", "12345", "12345");
         assertEquals("ERROR_PASSWORD_TOO_SHORT", result);
     }
+    @Test
+    void test10_PasswordExactBoundary_BVA() {
+        // BVA (Sınır Değer): Şifre tam 6 karakter (Kabul edilmeli)
+        String result = form.register("Ali", "Yılmaz", "ali@test.com", "01/01/1990", "123456", "123456");
+        assertEquals("SUCCESS", result);
+    }
+
+    @Test
+    void test11_PasswordMismatch() {
+        // EP (Geçersiz Sınıf): Şifreler birbirinden farklı
+        String result = form.register("Ali", "Yılmaz", "ali@test.com", "01/01/1990", "123456", "654321");
+        assertEquals("ERROR_PASSWORD_MISMATCH", result);
+    }
+
+    @Test
+    void test12_NullPassword() {
+        String result = form.register("Ali", "Yılmaz", "ali@test.com", "01/01/1990", null, "123456");
+        assertEquals("ERROR_PASSWORD_TOO_SHORT", result);
+    }
+
+
+    @Test
+    void test13_DateTooShort_BVA() {
+        // BVA: dd/mm/yyyy tam 10 karakterdir. Biz 9 karakter girdik.
+        String result = form.register("Ali", "Yılmaz", "ali@test.com", "01/01/990", "123456", "123456");
+        assertEquals("ERROR_INVALID_DATE_FORMAT", result);
+    }
+
+    @Test
+    void test14_DateTooLong_BVA() {
+        // BVA: Sınırın bir üstü (11 karakter)
+        String result = form.register("Ali", "Yılmaz", "ali@test.com", "01/01/19900", "123456", "123456");
+        assertEquals("ERROR_INVALID_DATE_FORMAT", result);
+    }
+
+    @Test
+    void test15_NullDate() {
+        String result = form.register("Ali", "Yılmaz", "ali@test.com", null, "123456", "123456");
+        assertEquals("ERROR_INVALID_DATE_FORMAT", result);
+    }
 }
+
 
